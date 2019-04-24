@@ -5,11 +5,15 @@ import com.blackteachan.gamebox.game.retrosnaker.RetroSnaker.Callback;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 /**
  * @author blackteachan
  */
 public class RetroSnakerView {
+
+    private RetroSnaker retroSnaker;
 
     private JPanel jpanel;
     private JPanel displayPanel;
@@ -29,24 +33,45 @@ public class RetroSnakerView {
             e.printStackTrace();
         }
 
+        //监听按键
+        frame.addKeyListener(new OnKeyListener());
+
         //游戏进程
-        RetroSnaker retroSnaker = new RetroSnaker();
+        retroSnaker = new RetroSnaker();
         retroSnaker.setState(RetroSnaker.STATE_RUN);
         retroSnaker.setCallback(new RetroSnakerCallback());
         retroSnaker.start();
 
+
     }
 
+    /**
+     * 键盘监听事件
+     */
+    public class OnKeyListener implements KeyListener{
+        public void keyTyped(KeyEvent e) {
+            System.out.println("keyTyped - KeyText: " + KeyEvent.getKeyText(e.getKeyCode()) + ", KeyCode: " + e.getKeyCode());
+        }
+        public void keyPressed(KeyEvent e) {
+            retroSnaker.remove(e.getKeyCode() - KeyEvent.VK_LEFT);
+            System.out.println("keyPressed - KeyText: " + KeyEvent.getKeyText(e.getKeyCode()) + ", KeyCode: " + e.getKeyCode());
+        }
+        public void keyReleased(KeyEvent e) {
+            System.out.println("keyReleased - KeyText: " + KeyEvent.getKeyText(e.getKeyCode()) + ", KeyCode: " + e.getKeyCode());
+        }
+    }
+
+    /**
+     * 游戏线程回调
+     */
     public class RetroSnakerCallback extends Callback {
         @Override
         public void update(int x, int y, byte[][] map) {
             long time = System.currentTimeMillis();
-            System.out.println("callback - x = " + x + ", y = " + y);
             Graphics g = displayPanel.getGraphics();
             for (int i = 0; i < y; i++) {
                 for (int j = 0; j < x; j++) {
                     try {
-                        System.out.println("i = " + i + ", j = " + j + ", map = " + map[i][j]);
                         Color color = Color.white;
                         if(map[i][j] == 0){
                             color = Color.white;
@@ -63,6 +88,5 @@ public class RetroSnakerView {
             System.out.println("RetroSnakerCallback.update() - time : " + (System.currentTimeMillis() - time) + "ms");
         }
     }
-
 
 }

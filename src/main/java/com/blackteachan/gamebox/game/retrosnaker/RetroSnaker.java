@@ -5,6 +5,11 @@ package com.blackteachan.gamebox.game.retrosnaker;
  */
 public class RetroSnaker extends Thread{
 
+    public static final int ORIENTATION_LEFT = 0;
+    public static final int ORIENTATION_UP = 1;
+    public static final int ORIENTATION_RIGHT = 2;
+    public static final int ORIENTATION_DOWN = 3;
+
     private static final int NUMBER_X = 10;
     private static final int NUMBER_Y = 20;
 
@@ -14,6 +19,8 @@ public class RetroSnaker extends Thread{
     private byte mState = STATE_STOP;
 
     private static byte[][] mMap = new byte[NUMBER_Y][NUMBER_X];
+    private static int mX = 0;
+    private static int mY = 0;
     private static Callback mCallback = null;
 
     public RetroSnaker(){
@@ -52,6 +59,38 @@ public class RetroSnaker extends Thread{
         }
     }
 
+    public void remove(int orientation){
+        if(orientation == ORIENTATION_LEFT){
+            //防止穿墙
+            if(mX != 0){
+                mMap[mY][mX--] = 0;
+                mMap[mY][mX] = 1;
+            }
+        }else if(orientation == ORIENTATION_UP){
+            if(mY != 0){
+                mMap[mY--][mX] = 0;
+                mMap[mY][mX] = 1;
+            }
+        }else if(orientation == ORIENTATION_RIGHT){
+            if(mX != NUMBER_X){
+                mMap[mY][mX++] = 0;
+                mMap[mY][mX] = 1;
+            }
+        }else if(orientation == ORIENTATION_DOWN){
+            if(mY != NUMBER_Y){
+                mMap[mY++][mX] = 0;
+                mMap[mY][mX] = 1;
+            }
+        }
+        if(mCallback != null) {
+            mCallback.update(NUMBER_X, NUMBER_Y, mMap);
+        }
+    }
+
+    /**
+     * 设置运行状态
+     * @param state
+     */
     public void setState(byte state) {
         this.mState = state;
     }
