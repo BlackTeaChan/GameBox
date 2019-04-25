@@ -2,6 +2,7 @@ package com.blackteachan.gamebox.view;
 
 import com.blackteachan.gamebox.game.retrosnaker.RetroSnaker;
 import com.blackteachan.gamebox.game.retrosnaker.RetroSnaker.Callback;
+import com.blackteachan.gamebox.utils.LogUtil;
 
 import javax.swing.*;
 import java.awt.*;
@@ -12,6 +13,8 @@ import java.awt.event.KeyListener;
  * @author blackteachan
  */
 public class RetroSnakerView {
+    
+    LogUtil log = new LogUtil(RetroSnakerView.class);
 
     private RetroSnaker retroSnaker;
 
@@ -38,7 +41,6 @@ public class RetroSnakerView {
 
         //游戏进程
         retroSnaker = new RetroSnaker();
-        retroSnaker.setState(RetroSnaker.STATE_RUN);
         retroSnaker.setCallback(new RetroSnakerCallback());
         retroSnaker.start();
 
@@ -50,14 +52,14 @@ public class RetroSnakerView {
      */
     public class OnKeyListener implements KeyListener{
         public void keyTyped(KeyEvent e) {
-            System.out.println("keyTyped - KeyText: " + KeyEvent.getKeyText(e.getKeyCode()) + ", KeyCode: " + e.getKeyCode());
+//            log.d("keyTyped - KeyText: " + KeyEvent.getKeyText(e.getKeyCode()) + ", KeyCode: " + e.getKeyCode());
         }
         public void keyPressed(KeyEvent e) {
-            retroSnaker.remove(e.getKeyCode() - KeyEvent.VK_LEFT);
-            System.out.println("keyPressed - KeyText: " + KeyEvent.getKeyText(e.getKeyCode()) + ", KeyCode: " + e.getKeyCode());
+            retroSnaker.move(e.getKeyCode() - KeyEvent.VK_LEFT);
+//            log.d("keyPressed - KeyText: " + KeyEvent.getKeyText(e.getKeyCode()) + ", KeyCode: " + e.getKeyCode());
         }
         public void keyReleased(KeyEvent e) {
-            System.out.println("keyReleased - KeyText: " + KeyEvent.getKeyText(e.getKeyCode()) + ", KeyCode: " + e.getKeyCode());
+//            log.d("keyReleased - KeyText: " + KeyEvent.getKeyText(e.getKeyCode()) + ", KeyCode: " + e.getKeyCode());
         }
     }
 
@@ -77,15 +79,21 @@ public class RetroSnakerView {
                             color = Color.white;
                         }else if(map[i][j] == 1){
                             color = Color.black;
+                        }else if(map[i][j] == 2){
+                            color = Color.blue;
                         }
                         g.setColor(color);
                         g.fill3DRect(j*20,i*20,20,20, true);
                     }catch (Exception e){
-                        System.out.println(e + "\ni = " + i + ", j = " + j);
+                        log.d(e + "\ni = " + i + ", j = " + j);
                     }
                 }
             }
-            System.out.println("RetroSnakerCallback.update() - time : " + (System.currentTimeMillis() - time) + "ms");
+            log.d("RetroSnakerCallback.update() - time : " + (System.currentTimeMillis() - time) + "ms");
+        }
+        @Override
+        public void die() {
+            log.d("RetroSnakerCallback.die() - You are die.");
         }
     }
 
